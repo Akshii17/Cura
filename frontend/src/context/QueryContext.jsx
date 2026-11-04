@@ -16,7 +16,7 @@ const QueryContext = createContext(null);
 export const useQueryContext = () => useContext(QueryContext);
 
 const GRAPHQL_ENDPOINT =
-  "https://api.studio.thegraph.com/query/1723072/cura-graph-5/version/latest";
+  "https://api.studio.thegraph.com/query/1723072/cura-graph-8/version/latest";
 
 export const QueryContextProvider = ({ children }) => {
   const { artist, contract } = useArtistContext();

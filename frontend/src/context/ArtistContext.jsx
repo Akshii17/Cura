@@ -32,6 +32,7 @@ export const ArtistContextProvider = ({ children }) => {
         const signer = await provider.getSigner();
         const c = new ethers.Contract(ContractAddress, abi, signer);
         setContract(c);
+        console.log(c);
 
         const artistData = await c.login(); // throws if not registered
         setArtist(artistData);

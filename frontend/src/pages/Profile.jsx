@@ -115,7 +115,7 @@ const ArtistFollowerStrip = ({ artists = [] }) => {
 
 
 const Profile = () => {
-  const GRAPHQL_ENDPOINT = "https://api.studio.thegraph.com/query/1723072/cura-graph-5/version/latest";
+  const GRAPHQL_ENDPOINT = "https://api.studio.thegraph.com/query/1723072/cura-graph-8/version/latest";
 
   const { contract, address, isConnected, artist, fetchArtist } = useArtistContext();
   const { artworks, fetchArtworks, fetchArtists, artists, owners, auction, followersList, following, withdrawals, fetchWithdrawals } = useQueryContext();

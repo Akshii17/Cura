@@ -2,6 +2,7 @@
 pragma solidity ^0.8.20;
 //added events
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "@openzeppelin/contracts/utils/Base64.sol";
 contract artAuction is ERC721 {
     //NFT MINTING-------------------------------------------------------------------------------
     //using ECDSA for bytes32;
@@ -52,6 +53,7 @@ contract artAuction is ERC721 {
        
     }
     //General
+    string public gateway = "https://ipfs.io/ipfs/";
     mapping(address => Artist) public artists;
     mapping(address => bool) public isRegistered;
     mapping(address => mapping(address => bool)) public isFollowing; // follower -> artist -> true/false
@@ -66,12 +68,16 @@ contract artAuction is ERC721 {
     //Direct
     uint public DirectSaleCount = 0;
     mapping(uint => DS) directSales;
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
-        require(_ownerOf(tokenId) != address(0), "Token does not exist"); //ownerOf comes from openzepplied and checks of the token exists or not
-        return string(abi.encodePacked("ipfs://", artworks[tokenId].ipfsHash));
-    }
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    require(_ownerOf(tokenId) != address(0), "Token does not exist");
+    Artwork storage a = artworks[tokenId];
+    bytes memory json = abi.encodePacked(
+        '{"name":"', a.artworkTitle,
+        '","description":"', a.description,
+        '","image":"', gateway, a.ipfsHash, '"}'
+    );
+    return string(abi.encodePacked("data:application/json;base64,", Base64.encode(json)));
+}
     function mintNFT(address to, uint artId) internal {
         require(!minted[artId], "NFT already minted");
         Artwork storage art = artworks[artId];
@@ -82,6 +88,11 @@ contract artAuction is ERC721 {
     }
     // GENERAL FUNCTIONS -------------------------------------------------------------------
    
+    function setGateway(string memory _gateway) public {
+        require(msg.sender == admin, "Only admin");
+        gateway = _gateway;
+    }
+
     function checkOwnership(uint artID) public view returns (address){
         if(!minted[artID]){
             Artwork storage artwork= artworks[artID];
@@ -156,6 +167,8 @@ contract artAuction is ERC721 {
     }
 
 
+
+
     event artworkState(
         uint indexed artworkID,
         string artworkTitle,
@@ -209,6 +222,8 @@ contract artAuction is ERC721 {
     );
 
 
+
+
     function LikeUnlike( uint _artWorkID) public{
         bool liked;
         Artist storage artist = artists[msg.sender];
@@ -254,6 +269,8 @@ contract artAuction is ERC721 {
             isFollowing[msg.sender][_artistAddr] = false;
             follow = false;
             artist.followers -= 1;
+
+
 
 
         } else if (!isFollowing[msg.sender][_artistAddr]) {
@@ -322,7 +339,7 @@ contract artAuction is ERC721 {
         artwork.originalArtist,
         artwork.available);
     }
-    
+   
     event bidPlaced(address bidder, uint bid, uint auctionID);
     function placeBid(uint auctionID) public payable {
         require(
@@ -358,6 +375,7 @@ contract artAuction is ERC721 {
             artwork.saleType = "";
         }
 
+
         else if (artwork.originalArtist != auction.seller) {
             uint royaltyPercentage = artwork.royaltyP;
             uint royaltyAmt = (royaltyPercentage * auction.winningBid) / 100;
@@ -390,7 +408,7 @@ contract artAuction is ERC721 {
         artwork.originalArtist,
         artwork.available);
     }
-    event withdraw(uint amount, address indexed receiver, auctionID);
+    event withdraw(uint amount, address indexed receiver, uint indexed auctionID);
     function withdrawRefund(uint auctionID) public { //called by participants of auction who didnt win
         Auction storage auction = auctions[auctionID];
         require(auction.ended, "Auction hasn't ended yet");
@@ -448,12 +466,16 @@ contract artAuction is ERC721 {
     }
 
 
+
+
     function buyDSArtwork(uint DSid) public payable {
         require(isRegistered[msg.sender], "Please register to buy artwork");
         DS storage directSale = directSales[DSid];
         Artwork storage artwork = artworks[directSale.artworkID];
         require(!directSale.sold , "This artwork has already been sold");
         require(msg.value == directSale.price, "Price is incorrect");
+
+
 
 
         if (directSale.seller == artwork.originalArtist) {    //First time sale, current owner = originalArtist
@@ -517,3 +539,4 @@ contract artAuction is ERC721 {
         artwork.available);
     }
 }
+

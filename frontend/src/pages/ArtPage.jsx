@@ -12,7 +12,7 @@ import { Heart, LoaderCircle } from "lucide-react";
 import { fetchEthPriceINR } from "../context/ethToRupee";
 
 const ArtPage = () => {
-  const GRAPHQL_ENDPOINT = "https://api.studio.thegraph.com/query/1723072/cura-graph-5/version/latest";
+  const GRAPHQL_ENDPOINT = "https://api.studio.thegraph.com/query/1723072/cura-graph-8/version/latest";
 
   const [open, setOpen] = useState(false);
   const [currentOwner, setCurrentOwner] = useState(null);

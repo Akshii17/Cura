@@ -45,7 +45,6 @@ Marketplace state (listings, bids, likes, follows) lives on an ERC-721 smart con
 - **Landing / join flow** (`/join`) — marketing page + wallet connect + on-chain registration modal
 - **Home** (`/`) — curated marketing landing with featured/live sections (uses static demo data; links to Explore for live listings)
 - **Analytics dashboard** (`/analytics`) — artist dashboard UI with charts <!-- currently uses static/mock chart data -->
-- **Profile notifications UI** — notification panel on Profile page <!-- currently uses static placeholder notifications -->
 - **Auction bid history** — bid timeline loaded from The Graph on artwork detail pages
 
 ---
@@ -224,7 +223,7 @@ Create `frontend/.env`:
 VITE_WALLETCONNECT_PROJECT_ID=your_walletconnect_project_id
 VITE_SEPOLIA_ID=https://eth-sepolia.g.alchemy.com/v2/your_key
 VITE_BACKEND_URL=http://localhost:5000/api/v1
-VITE_GRAPHQL_URL=https://api.studio.thegraph.com/query/1723072/cura-graph-5/version/latest
+VITE_GRAPHQL_URL=https://api.studio.thegraph.com/query/1723072/cura-graph-6/version/latest
 ```
 
 > **Note:** `QueryContext.jsx` currently hardcodes the GraphQL endpoint URL. `VITE_GRAPHQL_URL` is used by `apolloClient.js` but most reads go through `graphql-request` in `QueryContext`. Align these if you change subgraph deployments.
@@ -314,34 +313,3 @@ Inheritance-CURA/
 
 ---
 
-## Roadmap / Known Limitations
-
-- **On-chain social graph** — follows and likes are stored entirely on-chain. This is a deliberate design choice today but increases gas cost per interaction; a future version could move social signals off-chain or use signatures + indexing.
-- **Testnet only** — the app is configured for **Sepolia**; mainnet deployment would require contract redeploy, subgraph re-index, and env updates.
-- **No contract toolchain in repo** — deployment/upgrade scripts are not included; contract changes are manual.
-- **Partial mock UI data** — Home featured/live sections and the Analytics dashboard use static placeholder data rather than live subgraph metrics.
-- **Placeholder notifications** — Profile notification items are static UI samples, not wired to on-chain or backend events.
-- **Single monolithic contract** — all marketplace logic lives in one `artAuction` contract (including ERC-721), which simplifies deployment but limits modular upgrades.
-- **`admin` address** — set in the contract constructor but not used by any exposed admin functions in the current source.
-- **Unused / legacy code** — `frontend/src/pages/SignUp.jsx` appears unused (registration is handled on `Landing.jsx` via wallet + on-chain `registerUser`).
-
----
-
-## Contributing
-
-Contributions are welcome.
-
-1. Fork the repository and create a feature branch.
-2. Keep changes focused and match existing code style.
-3. Test locally: backend upload, frontend flows on Sepolia, and subgraph build/tests where relevant.
-4. Open a pull request with a clear description of what changed and how to test it.
-
-Please do not commit secrets (`.env`, Pinata keys, RPC URLs with private keys).
-
----
-
-## License
-
-<!-- TODO: confirm — no root LICENSE file found; subgraph/package.json declares `"license": "UNLICENSED"` -->
-
-This project is currently **UNLICENSED** unless a LICENSE file is added at the repository root.
